@@ -27,7 +27,7 @@ if tekan:
         user[low] = {"username":username,"password":password}
         tulis_usn(user)
         st.success("Berhasil Daftar")
-        st.switch_page("login.py")
+        st.switch_page("pages/login.py")
 
 st.caption("Sudah punya akun?")
 if st.button("Masuk Sekarang"):
