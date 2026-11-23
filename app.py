@@ -1,6 +1,6 @@
 import streamlit as st
 import json
-st.set_page_config(page_title='Filmku',layout="wide")
+st.set_page_config(page_title='Filmku',page_icon="🎬",layout="wide")
 def logout():
     st.session_state.clear()
     st.rerun()
