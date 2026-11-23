@@ -29,7 +29,7 @@ def kartu(f:dict,asal,offset):
     with st.container(border=True):
         if foto:
             st.image("https://image.tmdb.org/t/p/w342"+foto)
-        st.markdown(f'**{f.get('title') or f.get('name')}**')
+        st.markdown(f'**{f.get('original_title') or f.get('name')}**')
         kunci=f'{asal}_{f.get('id')}_{offset}'
         st.caption(f'{tahun} · {skor} ')
         col1,col2=st.columns(2)
