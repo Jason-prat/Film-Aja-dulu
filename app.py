@@ -1,5 +1,7 @@
 import streamlit as st
 import json
+from readwrite import *
+
 st.set_page_config(page_title='Filmku',layout="wide")
 def logout():
     st.session_state.clear()
@@ -14,11 +16,10 @@ rekomendasi=st.Page('pages/rekomendasi.py',title='Rekomendasi')
 statistik=st.Page('pages/statistik.py',title='Statistik')
 tambah=st.Page('pages/tambah.py',title='Tambah',visibility='hidden')
 keluar=st.Page(logout,title='Keluar',icon=':material/logout:')
-with open('users.json','r') as file:
-    userdb=json.load(file)
+data=baca_usn
 
 if st.session_state.get('user'):
-    profile=st.Page('pages/profile.py',title=userdb[st.session_state['user']]['nama'])
+    profile=st.Page('pages/profile.py',title=data[st.session_state['user']]['nama'])
     pg= st.navigation([beranda,riwayat,cari,statistik,rekomendasi,profile,keluar],position='top')
 else:
     pg= st.navigation([login,register],position='hidden')

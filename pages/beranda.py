@@ -6,8 +6,9 @@ api=st.secrets['TMDB_API_KEY']
 st.header('Filmku')
 
 try:
-    trend=trending(url,api)
-    akan_rilis=upcoming(url,api)
+    with st.spinner("Memuat film..."):
+        trend=trending(url,api)
+        akan_rilis=upcoming(url,api)
 except requests.RequestException:
     st.error('Gagal Mengambil Data Dari TMDB')
 st.subheader('Trending Minggu Ini')
