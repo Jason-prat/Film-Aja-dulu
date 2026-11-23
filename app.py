@@ -6,7 +6,6 @@ st.set_page_config(page_title='Filmku',page_icon="🎬",layout="wide")
 def logout():
     st.session_state.clear()
     st.rerun()
-st.session_state['user']='jason'
 beranda=st.Page('pages/beranda.py',title='Beranda',default=True)
 cari=st.Page('pages/cari.py',title='Cari Film')
 riwayat=st.Page('pages/riwayat.py',title='Riwayat')
