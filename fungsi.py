@@ -1,0 +1,62 @@
+import json
+import streamlit as st
+import requests
+import math
+
+
+url='https://api.themoviedb.org/3'
+api=st.secrets['TMDB_API_KEY']
+def buka(hal,id):
+    st.session_state['id']=id
+def trending(url,api):
+    path='/trending/movie/week'
+    r=requests.get(url+path,params={'api_key':api,'language':'id-ID'})
+    trending=r.json()['results']
+    return trending
+
+def kartu(f:dict,asal,no):
+    foto=f.get('poster_path')
+    tahun = (f.get("release_date") or f.get("first_air_date") or "")[:4]
+    skor=f'⭐ {f.get('vote_average'):.1f}' if f.get('vote_average') else ""
+    with st.container(border=True):
+        if foto:
+            st.image("https://image.tmdb.org/t/p/w342"+foto)
+        st.markdown(f'**{f.get('title') or f.get('name')}**')
+        kunci=f'{asal}_{f.get('id')}'
+        st.caption(f'{tahun} · {skor} ')
+        col1,col2=st.columns(2)
+        with col1:
+            if st.button('Detail',key=f'detail{kunci}',type='secondary',use_container_width=True):
+                buka(asal,f['id'])
+                st.switch_page('pages/detail.py')
+        with col2:
+            if st.button('Tambah Film',key=f'tambah_{kunci}',type='primary',use_container_width=True):
+                buka(asal,f['id'])
+                st.switch_page('pages/tambah.py')
+def grid(film,asal,n=4,offset=0):
+    for i,item in enumerate(film):
+        if i%n==0:
+            kolom=st.columns(n,gap='medium')
+        with kolom[i%n]:
+            kartu(item,asal,offset+i)
+
+def ganti_hal(kunci,ganti):
+    st.session_state[kunci]+=ganti
+def halaman(film,asal,hal=4):
+    kunci=f'hal_{asal}'
+    total=max(1, math.ceil(len(film)/hal))
+    st.session_state.setdefault(kunci,1)
+    
+    st.session_state[kunci] = min(max(st.session_state[kunci],1),total)
+    
+    halaman=st.session_state[kunci]
+    mulai = (halaman-1)*hal
+    grid(film[mulai:mulai + hal],asal,4,mulai)
+
+    kiri,tengah,kanan=st.columns(3)
+    with kiri:
+        st.button('Prev',key=f'prev_{asal}',disabled=halaman<=1,on_click=ganti_hal,args=(kunci,-1),use_container_width=True)
+    with tengah:
+        st.markdown(f'Halaman {halaman} dari {total}',text_alignment='center')
+    with kanan:
+        st.button('Next',key=f'next_{asal}',disabled=halaman>=total,on_click=ganti_hal,args=(kunci,1),use_container_width=True)

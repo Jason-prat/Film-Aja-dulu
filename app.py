@@ -1,6 +1,27 @@
-def main():
-    print("Hello from film-aja-dulu!")
+import streamlit as st
+import json
+st.set_page_config(page_title='Filmku',layout="wide")
+def logout():
+    st.session_state.clear()
+    st.rerun()
+st.session_state['user']='joy'
+beranda=st.Page('pages/beranda.py',title='Beranda',default=True)
+cari=st.Page('pages/cari.py',title='Cari Film')
+riwayat=st.Page('pages/riwayat.py',title='Riwayat')
+login=st.Page('pages/login.py',title='Login',default=True)
+register=st.Page('pages/register.py',title='Register')
+detail=st.Page('pages/detail.py',title='Detail',visibility='hidden')
+rekomendasi=st.Page('pages/rekomendasi.py',title='Rekomendasi')
+statistik=st.Page('pages/statistik.py',title='Statistik')
+tambah=st.Page('pages/tambah.py',title='Tambah',visibility='hidden')
+keluar=st.Page(logout,title='Keluar',icon=':material/logout:')
+with open('users.json','r') as file:
+    userdb=json.load(file)
 
+if st.session_state.get('user'):
+    profile=st.Page('pages/profile.py',title='hai')#userdb[st.session_state['user']]['nama'])
+    pg= st.navigation([beranda,cari,riwayat,statistik,rekomendasi,profile,keluar],position='top')
+else:
+    pg= st.navigation([login,register],position='hidden')
 
-if __name__ == "__main__":
-    main()
+pg.run()
