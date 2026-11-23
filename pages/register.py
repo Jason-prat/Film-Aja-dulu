@@ -25,9 +25,10 @@ if tekan:
         st.error("Username Telah Digunakan")
     else:
         user[low] = {"username":username,"password":password}
+        tulis_usn(user)
         st.success("Berhasil Daftar")
         st.switch_page("login.py")
-        
+
 st.caption("Sudah punya akun?")
 if st.button("Masuk Sekarang"):
     st.switch_page("login.py")
