@@ -31,4 +31,4 @@ if tekan:
 
 st.caption("Sudah punya akun?")
 if st.button("Masuk Sekarang"):
-    st.switch_page("login.py")
+    st.switch_page("pages/login.py")
