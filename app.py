@@ -4,7 +4,6 @@ st.set_page_config(page_title='Filmku',layout="wide")
 def logout():
     st.session_state.clear()
     st.rerun()
-st.session_state['user']='joy'
 beranda=st.Page('pages/beranda.py',title='Beranda',default=True)
 cari=st.Page('pages/cari.py',title='Cari Film')
 riwayat=st.Page('pages/riwayat.py',title='Riwayat')
@@ -19,8 +18,8 @@ with open('users.json','r') as file:
     userdb=json.load(file)
 
 if st.session_state.get('user'):
-    profile=st.Page('pages/profile.py',title='hai')#userdb[st.session_state['user']]['nama'])
-    pg= st.navigation([beranda,cari,riwayat,statistik,rekomendasi,profile,keluar],position='top')
+    profile=st.Page('pages/profile.py',title=userdb[st.session_state['user']]['nama'])
+    pg= st.navigation([beranda,riwayat,cari,statistik,rekomendasi,profile,keluar],position='top')
 else:
     pg= st.navigation([login,register],position='hidden')
 
