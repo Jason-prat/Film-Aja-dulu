@@ -19,7 +19,10 @@ if tekan:
         st.session_state['user'] = username
         st.success("Berhasil Masuk")
         st.rerun()
-        
+
+if 'sukses' in st.session_state:
+    st.success(st.session_state.pop('sukses'))
+
 st.caption("Belum punya akun?")
 if st.button("Buat Sekarang"):
     st.switch_page("pages/register.py")
