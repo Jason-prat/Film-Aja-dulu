@@ -3,18 +3,22 @@ import streamlit as st
 import requests
 import math
 from datetime import date
+from datetime import datetime
 
 url='https://api.themoviedb.org/3'
 api=st.secrets['TMDB_API_KEY']
 def buka(hal,id):
     st.session_state['id']=id
     st.session_state['asal']=hal
+    
+@st.cache_data(ttl=3600,show_spinner='Memuat trending...')
 def trending(url,api):
     path='/trending/movie/week'
     r=requests.get(url+path,params={'api_key':api,'language':'id-ID'})
     trending=r.json()['results']
     return trending
 
+@st.cache_data(ttl=3600,show_spinner='Memuat akan rilis...')
 def upcoming(url,api,hal=4):
     sekarang=date.today().isoformat()
     film=[]
@@ -23,6 +27,7 @@ def upcoming(url,api,hal=4):
         film+=r.json()['results']
     return film
 
+@st.cache_data(ttl=3600,show_spinner='Memuat cari film...')
 def cari_film(url,api,query,hal=4):
     path= '/search/movie'
     film =[]
@@ -30,6 +35,7 @@ def cari_film(url,api,query,hal=4):
         r= requests.get(f"{url}{path}",params={'api_key':api,'query':query,'page':i,'region':'ID'})
         film+=r.json()['results']
     return film
+
 def kartu(f:dict,asal,offset):
     foto=f.get('poster_path')
     tahun = (f.get("release_date") or f.get("first_air_date") or "")[:4]
@@ -51,15 +57,17 @@ def kartu(f:dict,asal,offset):
             if st.button('Tambah Film',key=f'tambah_{kunci}',type='primary',use_container_width=True):
                 buka(asal,f['id'])
                 st.switch_page('pages/tambah.py')
-def grid(film,asal,n=4,offset=0):
+
+def grid(film,asal,n=4,offset=0): #buat jumlah kolom
     for i,item in enumerate(film):
         if i%n==0:
             kolom=st.columns(n,gap='medium')
         with kolom[i%n]:
             kartu(item,asal,offset+i)
 
-def ganti_hal(kunci,ganti):
+def ganti_hal(kunci,ganti): #buat menambah kunci halaman
     st.session_state[kunci]+=ganti
+
 def halaman(film,asal,hal=4):
     kunci=f'hal_{asal}'
     total=max(1, math.ceil(len(film)/hal))
@@ -78,3 +86,31 @@ def halaman(film,asal,hal=4):
         st.markdown(f'Halaman {halaman} dari {total}',text_alignment='center')
     with kanan:
         st.button('Next',key=f'next_{asal}',disabled=halaman>=total,on_click=ganti_hal,args=(kunci,1),use_container_width=True)
+
+@st.cache_data(ttl=3600,show_spinner='Memuat data film...')
+def detail():
+    api=st.secrets['TMDB_API_KEY']
+    r=requests.get(f'https://api.themoviedb.org/3/movie/{st.session_state['id']}',params={'api_key':api,"append_to_response": "credits,videos"})
+    data_film=r.json()
+    poster=data_film.get('poster_path')
+    cast=[]
+    kru=data_film.get('credits',{}).get('crew',[])
+    for i in range(len(data_film['credits'].get('cast')[:5])):
+        detail=[]
+        detail.append(data_film['credits'].get('cast')[i]['name'])
+        detail.append(data_film['credits'].get('cast')[i]['profile_path'])
+        detail.append(data_film['credits'].get('cast')[i]['character'])
+        cast.append(detail)
+    direktor=[i['name'] for i in kru if i['job']=='Director']
+    direktor=', '.join(direktor)
+    genres=data_film.get('genres')
+    genre=[i.get('name') for i in genres]
+    genres=', '.join(genre)
+    videos=data_film.get('videos').get('results')
+    skor=f'·⭐ {data_film.get('vote_average'):.1f}' if data_film.get('vote_average') else ""
+    trailer=None
+    trailer=[i['key'] for i in videos if i.get('type')=='Trailer' and i.get('site')=='YouTube' and 'fan' not in i.get('name','').lower()]
+    tanggal=datetime.strptime(data_film['release_date'], "%Y-%m-%d").date()
+    rilis=tanggal.strftime("%d %B %Y")
+    
+    return {'poster':poster,'direktor':direktor,'durasi':data_film.get('runtime'),'genre':genres,'rilis':rilis+skor,'pemeran':cast,'sinopsis':data_film.get('overview'),'trailer':f"https://www.youtube.com/watch?v={trailer[0]}",'judul':data_film.get('original_title'),'tahun':data_film.get('release_date')[:4]}
