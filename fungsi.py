@@ -27,10 +27,12 @@ def kartu(f:dict,asal,offset):
     foto=f.get('poster_path')
     tahun = (f.get("release_date") or f.get("first_air_date") or "")[:4]
     skor=f'·⭐ {f.get('vote_average'):.1f}' if f.get('vote_average') else ""
-    with st.container(border=True,height='stretch'):
+    judul=f.get('original_title') or f.get('name')
+    judul_bersih=judul if len(judul)<25 else judul[:25]+'...'
+    with st.container(border=True,height=520):
         if foto:
             st.image("https://image.tmdb.org/t/p/w342"+foto)
-        st.markdown(f'**{f.get('original_title') or f.get('name')}**')
+        st.markdown(f'**{judul_bersih}**')
         kunci=f'{asal}_{f.get('id')}_{offset}'
         st.caption(f'{tahun} {skor} ')
         col1,col2=st.columns(2)
