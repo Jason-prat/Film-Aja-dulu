@@ -30,7 +30,7 @@ with b:
             
     st.subheader('Sinopsis')
     st.write(data['sinopsis'])
-    if data['trailer'].split('v='):
+    if data['trailer'].split('v=')[1]=='':
         st.video(data['trailer'],width=900)
     else:
         st.caption("Trailer belum tersedia.")
