@@ -1,6 +1,6 @@
 import streamlit as st
 from readwrite import *
-#ini halaman kalau mau buat ganti pw gez
+
 username = st.session_state['user']
 if st.button("← Kembali Ke Beranda"):
     st.switch_page("pages/beranda.py")
@@ -23,10 +23,22 @@ with kanan:
             empt1,kiri1,kanan1 = st.columns([3,1,2])
             with kiri1:
                 batal = st.form_submit_button("Batal")
-                #langsung ku direct ke beranda
             with kanan1:
                 tekan = st.form_submit_button("Simpan Kata Sandi",type='primary')
     if batal:
         st.switch_page("pages/beranda.py")
+    if tekan:
+        user = baca_usn()
+        if lama != user[username]['password']:
+            st.error("Kata Sandi Lama Salah")
+        elif 8 > len(baru):
+            st.error("Kata Sandi Minimal Terdiri dari 8 Kata")
+        elif baru != konfirm:
+            st.error("Kata Sandi Baru Tidak Sama Dengan Perulangan")
+        elif baru == lama:
+            st.error("Kata Sandi Baru Harus Berbeda Dengan Sandi Lama")
+        else:
+            user[username]['password']= baru
+            tulis_usn(user)
+            st.success("Password Telah Berhasil Diganti")
 
-#tambah syaratnya sama json buat ubah pwnya
