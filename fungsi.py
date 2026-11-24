@@ -8,6 +8,7 @@ url='https://api.themoviedb.org/3'
 api=st.secrets['TMDB_API_KEY']
 def buka(hal,id):
     st.session_state['id']=id
+    st.session_state['asal']=hal
 def trending(url,api):
     path='/trending/movie/week'
     r=requests.get(url+path,params={'api_key':api,'language':'id-ID'})
@@ -18,20 +19,20 @@ def upcoming(url,api,hal=4):
     sekarang=date.today().isoformat()
     film=[]
     for i in range(1,hal+1):
-        r=requests.get(f'{url}/discover/movie',params={'api_key':api,'sort_by':'popularity.desc','primary_release_date.gte':sekarang,'page':i})
+        r=requests.get(f'{url}/discover/movie',params={'api_key':api,'sort_by':'popularity.desc','page':i,'primary_release_date.gte':sekarang,'region':'ID'})
         film+=r.json()['results']
     return film
 
 def kartu(f:dict,asal,offset):
     foto=f.get('poster_path')
     tahun = (f.get("release_date") or f.get("first_air_date") or "")[:4]
-    skor=f'⭐ {f.get('vote_average'):.1f}' if f.get('vote_average') else ""
+    skor=f'·⭐ {f.get('vote_average'):.1f}' if f.get('vote_average') else ""
     with st.container(border=True):
         if foto:
             st.image("https://image.tmdb.org/t/p/w342"+foto)
         st.markdown(f'**{f.get('original_title') or f.get('name')}**')
         kunci=f'{asal}_{f.get('id')}_{offset}'
-        st.caption(f'{tahun} · {skor} ')
+        st.caption(f'{tahun} {skor} ')
         col1,col2=st.columns(2)
         with col1:
             if st.button('Detail',key=f'detail{kunci}',type='secondary',use_container_width=True):
