@@ -18,7 +18,7 @@ tambah=st.Page('pages/tambah.py',title='Tambah',visibility='hidden')
 keluar=st.Page(logout,title='Keluar',icon=':material/logout:')
 data=baca_usn()
 if st.session_state.get('user'):
-    profile=st.Page('pages/profile.py',title=data[st.session_state['user']]['username'])
+    profile=st.Page('pages/profile.py',title='Akun')
     pg= st.navigation([beranda,riwayat,cari,statistik,rekomendasi,profile,keluar,detail,tambah],position='top')
 else:
     pg= st.navigation([login,register],position='hidden')

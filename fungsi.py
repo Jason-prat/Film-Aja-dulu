@@ -27,7 +27,7 @@ def kartu(f:dict,asal,offset):
     foto=f.get('poster_path')
     tahun = (f.get("release_date") or f.get("first_air_date") or "")[:4]
     skor=f'·⭐ {f.get('vote_average'):.1f}' if f.get('vote_average') else ""
-    with st.container(border=True):
+    with st.container(border=True,height='stretch'):
         if foto:
             st.image("https://image.tmdb.org/t/p/w342"+foto)
         st.markdown(f'**{f.get('original_title') or f.get('name')}**')
