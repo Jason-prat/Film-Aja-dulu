@@ -20,6 +20,8 @@ data=baca_usn()
 if st.session_state.get('user'):
     profile=st.Page('pages/profile.py',title='Akun')
     pg= st.navigation([beranda,riwayat,cari,statistik,rekomendasi,profile,keluar,detail,tambah],position='top')
+    if pg.title not in ['Cari Film','Detail','Tambah']:
+        st.session_state.pop('query',None)
 else:
     pg= st.navigation([login,register],position='hidden')
 
