@@ -36,3 +36,4 @@ with b:
         st.video(f"https://www.youtube.com/watch?v={data['trailer'][0]}",width=900)
     else:
         st.caption("Trailer belum tersedia.")
+

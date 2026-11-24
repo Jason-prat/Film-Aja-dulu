@@ -112,3 +112,6 @@ def detail(id):
     tanggal=datetime.strptime(data_film['release_date'], "%Y-%m-%d").date()
     rilis=tanggal.strftime("%d %B %Y") if tanggal else 'Belum Tersedia Tanggal Rilis'
     return {'poster':poster,'direktor':direktor,'durasi':data_film.get('runtime'),'genre':genres,'rilis':rilis+skor,'pemeran':cast,'sinopsis':data_film.get('overview'),'trailer':trailer,'judul':data_film.get('original_title'),'tahun':data_film.get('release_date')[:4]}
+
+def simpan_query():
+    st.session_state['query']=st.session_state['input']
