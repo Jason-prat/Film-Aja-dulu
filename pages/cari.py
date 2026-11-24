@@ -15,6 +15,8 @@ with st.spinner("Mencari film..."):
 if cari:
     st.caption(f'{len(cari)} hasil untuk {query}')
     halaman(cari,'cari_film',4)
+elif not query:
+    st.caption('Silahkan masukkan nama film')
 else:
     st.caption(f'0 hasil untuk {query}')
 
