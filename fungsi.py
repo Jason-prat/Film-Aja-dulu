@@ -29,7 +29,7 @@ def kartu(f:dict,asal,offset):
     skor=f'·⭐ {f.get('vote_average'):.1f}' if f.get('vote_average') else ""
     judul=f.get('original_title') or f.get('name')
     judul_bersih=judul if len(judul)<25 else judul[:25]+'...'
-    with st.container(border=True,height=520):
+    with st.container(border=True,height='stretch'):
         if foto:
             st.image("https://image.tmdb.org/t/p/w342"+foto)
         st.markdown(f'**{judul_bersih}**')
