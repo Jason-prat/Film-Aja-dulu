@@ -23,6 +23,13 @@ def upcoming(url,api,hal=4):
         film+=r.json()['results']
     return film
 
+def cari_film(url,api,query,hal=4):
+    path= '/search/movie'
+    film =[]
+    for i in range(1,hal+1):
+        r= requests.get(f"{url}{path}",params={'api_key':api,'query':query,'page':i,'region':'ID'})
+        film+=r.json()['results']
+    return film
 def kartu(f:dict,asal,offset):
     foto=f.get('poster_path')
     tahun = (f.get("release_date") or f.get("first_air_date") or "")[:4]
@@ -32,7 +39,7 @@ def kartu(f:dict,asal,offset):
     with st.container(border=True,height='stretch'):
         if foto:
             st.image("https://image.tmdb.org/t/p/w342"+foto)
-        st.markdown(f'**{judul_bersih}**')
+        st.markdown(f'**{judul}**')
         kunci=f'{asal}_{f.get('id')}_{offset}'
         st.caption(f'{tahun} {skor} ')
         col1,col2=st.columns(2)
