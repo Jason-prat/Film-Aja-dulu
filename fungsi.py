@@ -87,8 +87,8 @@ def halaman(film,asal,hal=4):
     with kanan:
         st.button('Next',key=f'next_{asal}',disabled=halaman>=total,on_click=ganti_hal,args=(kunci,1),use_container_width=True)
 
-# @st.cache_data(ttl=3600,show_spinner='Memuat data film...')
-def detail():
+@st.cache_data(ttl=3600,show_spinner='Memuat data film...')
+def detail(id):
     api=st.secrets['TMDB_API_KEY']
     r=requests.get(f'https://api.themoviedb.org/3/movie/{st.session_state['id']}',params={'api_key':api,"append_to_response": "credits,videos"})
     data_film=r.json()
@@ -107,9 +107,8 @@ def detail():
     genre=[i.get('name') for i in genres]
     genres=', '.join(genre)
     videos=data_film.get('videos').get('results')
-    skor=f'·⭐ {data_film.get('vote_average'):.1f}' if data_film.get('vote_average') else ""
-    trailer=None
+    skor=f' ·⭐ {data_film.get('vote_average'):.1f}' if data_film.get('vote_average') else ""
     trailer=[i['key'] for i in videos if i.get('type')=='Trailer' and i.get('site')=='YouTube' and 'fan' not in i.get('name','').lower()]
     tanggal=datetime.strptime(data_film['release_date'], "%Y-%m-%d").date()
-    rilis=tanggal.strftime("%d %B %Y")
-    return {'poster':poster,'direktor':direktor,'durasi':data_film.get('runtime'),'genre':genres,'rilis':rilis+skor,'pemeran':cast,'sinopsis':data_film.get('overview'),'trailer':f"https://www.youtube.com/watch?v={trailer}",'judul':data_film.get('original_title'),'tahun':data_film.get('release_date')[:4]}
+    rilis=tanggal.strftime("%d %B %Y") if tanggal else 'Belum Tersedia Tanggal Rilis'
+    return {'poster':poster,'direktor':direktor,'durasi':data_film.get('runtime'),'genre':genres,'rilis':rilis+skor,'pemeran':cast,'sinopsis':data_film.get('overview'),'trailer':trailer,'judul':data_film.get('original_title'),'tahun':data_film.get('release_date')[:4]}
