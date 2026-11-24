@@ -2,7 +2,7 @@ import streamlit as st
 from fungsi import *
 import requests
 from datetime import datetime
-
+#nanti jangan lupa nambahin status sudah nntn dll, kalau halaman tambah dah beres
 st.header("Cari & Tambah Film")
 st.caption("Cari di TMDB (Tidak perlu lengkap)")
 query = st.text_input("Cari Film",placeholder="Inception",value=st.session_state.get('query',''),key='input',on_change=simpan_query,)
