@@ -21,11 +21,34 @@ def register(db,username,password):
         'password':password
     }).execute()
     return True
+
 def profile(db,username):
     cek= db.table('users').select('*').eq('username',username).execute()
     return cek.data
-# def tambah(data_tambah):
 
+
+def tambah(db,username,tmdb_id,status,tempat,tgl_tonton,catatan=None,rating_pribadi=None,favorit=None,durasi_terakhir=None,target_selesai=None,prioritas=None):
+    data = {
+        'username':username,
+        'tmdb_id':tmdb_id,
+        'status':status,
+        'tempat': tempat,
+        'tgl_tonton':tgl_tonton.isoformat(),
+        'catatan':catatan or None,
+        'rating_pribadi':rating_pribadi,
+        'favorit': favorit,
+        'durasi_terakhir':durasi_terakhir or None,
+        'target_selesai':target_selesai.isoformat() if target_selesai else None,
+        'prioritas':prioritas
+    }
+    try:
+        db.table('film').insert(data).execute()
+        return True, "Data Berhasil Diambil"
+    except Exception as kecuali:
+        if '23505' in str(kecuali) or "duplicate" in str(kecuali).lower():
+            return False, "Film ini sudah ada di Filmku"
+        return False, f"Gagal menyimpan: {kecuali}"
+    
 @st.cache_resource
 def ambildb():
     return create_client(st.secrets["SUPABASE_URL"], st.secrets["SUPABASE_KEY"])

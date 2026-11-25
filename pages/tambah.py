@@ -59,8 +59,20 @@ with kanan:
                             st.switch_page(f'pages/{st.session_state['asal'].split('_')[0]}.py')    
             with simpan:
                 if st.button("Simpan ke Filmku",type='primary'):
-                           
-                           st.success("Data Berhasiil Disimpan")
+                           indikator, pesan = tambah(
+                                sup,
+                                username = st.session_state['user'],
+                                tmdb_id= st.session_state['id'],
+                                status= "Sudah Ditonton",
+                                tempat=pntn,
+                                tgl_tonton=tgl_tonton,
+                                catatan=komen,
+                                rating_pribadi=rate,
+                                favorit=fav)                                                                                                                     
+                           if indikator: 
+                               st.success(pesan) 
+                           else: 
+                                st.error(pesan)
 
         elif simpan_status == 'Sedang Ditonton':
              ki,t,ka=st.columns(3)
@@ -78,7 +90,21 @@ with kanan:
                     st.switch_page(f'pages/{st.session_state['asal'].split('_')[0]}.py')    
              with simpan:
                 if st.button("Simpan ke Filmku",type='primary'):
-                    st.success("Data Berhasiil Disimpan")
+                           indikator, pesan = tambah(
+                                sup,
+                                username = st.session_state['user'],
+                                tmdb_id= st.session_state['id'],
+                                status= "Sedang Ditonton",
+                                tempat=pntn,
+                                tgl_tonton=tgl_tonton,
+                                catatan=komen,
+                                durasi_terakhir=terakhir,
+                                target_selesai=target)                                                                                                                     
+                           if indikator: 
+                               st.success(pesan) 
+                           else: 
+                                st.error(pesan)
+                    
         elif simpan_status == 'Ingin Ditonton':
              st.warning("Rating dan tanggal diisi nanti, setelah filmnya selesai ditonton.")
              ki,t,ka=st.columns(3)
@@ -95,4 +121,16 @@ with kanan:
                     st.switch_page(f'pages/{st.session_state['asal'].split('_')[0]}.py')    
              with simpan:
                 if st.button("Simpan ke Filmku",type='primary'):
-                    st.success("Data Berhasiil Disimpan")
+                           indikator, pesan = tambah(
+                                sup,
+                                username = st.session_state['user'],
+                                tmdb_id= st.session_state['id'],
+                                status= "Sudah Ditonton",
+                                tempat=pntn,
+                                tgl_tonton=tgl_tonton,
+                                catatan=komen,
+                                prioritas=prioritas)                                                                                                                     
+                           if indikator: 
+                               st.success(pesan) 
+                           else: 
+                                st.error(pesan)
