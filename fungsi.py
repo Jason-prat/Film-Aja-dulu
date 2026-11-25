@@ -4,6 +4,7 @@ import requests
 import math
 from datetime import date
 from datetime import datetime
+from readwrite import *
 
 url='https://api.themoviedb.org/3'
 api=st.secrets['TMDB_API_KEY']
@@ -48,6 +49,16 @@ def kartu(f:dict,asal,offset):
         st.markdown(f'**{judul}**')
         kunci=f'{asal}_{f.get('id')}_{offset}'
         st.caption(f'{tahun} {skor} ')
+        
+        stat= status_tonton(st.session_state['user']).get(f.get('id'))
+        if asal.split('_')[0]=='cari':
+            if stat == "Sudah Ditonton":
+                st.success(stat)
+            elif stat == "Sedang Ditonton":
+                st.warning(stat)
+            elif stat == "Ingin Ditonton":
+                st.error(stat)
+
         col1,col2=st.columns(2)
         with col1:
             if st.button('Detail',key=f'detail{kunci}',type='secondary',use_container_width=True):

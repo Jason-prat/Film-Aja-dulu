@@ -48,7 +48,12 @@ def tambah(db,username,tmdb_id,status,tempat,tgl_tonton,catatan=None,rating_prib
         if '23505' in str(kecuali) or "duplicate" in str(kecuali).lower():
             return False, "Film ini sudah ada di Filmku"
         return False, f"Gagal menyimpan: {kecuali}"
-    
+
+def status_tonton(username):
+    db=ambildb()
+    dats = db.table("film").select("tmdb_id,status").eq("username",username).execute()
+    return {datas["tmdb_id"]:datas['status'] for datas in dats.data}
+
 @st.cache_resource
 def ambildb():
     return create_client(st.secrets["SUPABASE_URL"], st.secrets["SUPABASE_KEY"])
