@@ -22,6 +22,7 @@ with kanan:
         sdh,sdg,ingin=st.columns(3)
         if 'status' not in st.session_state:
              st.session_state['status']=''
+        simpan_status=st.session_state['status']
         with sdh:
             if st.button("Sudah Ditonton",type='primary' if st.session_state['status']=="Sudah Ditonton" else 'secondary',use_container_width=True):
                 st.session_state['status'] = 'Sudah Ditonton'
