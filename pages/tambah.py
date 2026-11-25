@@ -3,10 +3,6 @@ from fungsi import *
 
 #belum lengkap, aku cuma nambah UI, belum insert ke json buat hasil inputnya
 
-with st.spinner("Memuat detail film..."):
-    api=st.secrets['TMDB_API_KEY']
-    r=requests.get(f'https://api.themoviedb.org/3/movie/{st.session_state['id']}',params={'api_key':api,"append_to_response": "credits,videos"})
-    data_film=r.json()
 data=detail(st.session_state['id'])
 
 kiri,kanan=st.columns([3,11])
@@ -26,18 +22,20 @@ with kanan:
         sdh,sdg,ingin=st.columns(3)
         if 'status' not in st.session_state:
              st.session_state['status']=''
-        simpan_status = st.session_state['status'] 
         with sdh:
-             if st.button("Sudah Ditonton",type='primary' if st.session_state['status']=="Sudah Ditonton" else 'secondary',use_container_width=True):
+            if st.button("Sudah Ditonton",type='primary' if st.session_state['status']=="Sudah Ditonton" else 'secondary',use_container_width=True):
                 st.session_state['status'] = 'Sudah Ditonton'
+                simpan_status = st.session_state['status']
                 st.rerun()
         with sdg:
             if st.button("Sedang Ditonton",type='primary' if st.session_state['status']=="Sedang Ditonton" else 'secondary',use_container_width=True):
                 st.session_state['status'] = 'Sedang Ditonton'
+                simpan_status = st.session_state['status'] 
                 st.rerun()
         with ingin:
             if st.button("Ingin Ditonton",type='primary' if st.session_state['status']=="Ingin Ditonton" else 'secondary',use_container_width=True):
                 st.session_state['status'] = 'Ingin Ditonton'
+                simpan_status = st.session_state['status'] 
                 st.rerun()
         if simpan_status == 'Sudah Ditonton':
             ki,t,ka=st.columns(3)
