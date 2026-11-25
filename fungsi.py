@@ -115,3 +115,38 @@ def detail(id):
 
 def simpan_query():
     st.session_state['query']=st.session_state['input']
+
+@st.cache_data(ttl=3600)
+def ambil_data_film(film):
+    url='https://api.themoviedb.org/3'
+    api=st.secrets['TMDB_API_KEY']
+    data=[]
+    for i in film:
+        r=requests.get(f'{url}/movie/{str(i['tmdb_id'])}',params={'api_key':api})
+        data.append({**r.json(),'pribadi':i})
+    return data
+
+def sorting(film,key,asc=True):
+    hasil = film[:]                      
+    n = len(hasil)
+    for i in range(n - 1):
+        tukar = False
+        for j in range(n - 1 - i):
+            a = key(hasil[j])
+            b = key(hasil[j + 1])
+            salah_urut = (a < b) if asc else (a > b)
+            if salah_urut:
+                hasil[j], hasil[j + 1] = hasil[j + 1], hasil[j]
+                tukar = True
+        if not tukar:                    
+            break
+    return hasil
+
+def key_rating(film):
+    return film['pribadi'].get('rating_pribadi') or 0
+
+def key_judul(film):
+    return film.get('original_title').lower()
+
+def key_tahun(film):
+    return (film.get('release_date') or '')[:4]

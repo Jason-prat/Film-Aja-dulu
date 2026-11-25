@@ -52,4 +52,7 @@ def tambah(db,username,tmdb_id,status,tempat,tgl_tonton,catatan=None,rating_prib
 @st.cache_resource
 def ambildb():
     return create_client(st.secrets["SUPABASE_URL"], st.secrets["SUPABASE_KEY"])
+
+def ambil_riwayat(db, username):
+    return db.table('film').select('*').eq('username', username).execute().data
  
