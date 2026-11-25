@@ -1,6 +1,7 @@
 import streamlit as st
 from readwrite import *
 
+
 st.title("Filmku🎬")
 st.subheader("Buat Akun")
 with st.form("form daftar"):
@@ -11,8 +12,8 @@ with st.form("form daftar"):
 
 if tekan:
     username = username.strip()
-    low = username.lower()
-    user = baca_usn()
+    sup = ambildb()
+
     if username== "" or password=='' or konfirmasi=='':
         st.error("Semua Kolom Wajib Diisi")
     elif len(username)<2:
@@ -21,13 +22,13 @@ if tekan:
         st.error("Kata Sandi Minimal Terdiri dari 8 Kata")
     elif password != konfirmasi:
         st.error("Kata Sandi Tidak Sama Dengan Perulangan")
-    elif low in user:
-        st.error("Username Telah Digunakan")
     else:
-        user[low] = {"username":username,"password":password}
-        tulis_usn(user)
-        st.session_state['sukses'] = ("Akun Berhasil Dibuat")
-        st.switch_page("pages/login.py")
+        data=(register(sup,username,password))
+        if data:
+            st.session_state['sukses'] = ("Akun Berhasil Dibuat")
+            st.switch_page("pages/login.py")
+        else:
+            st.error("Username Telah Digunakan")
 
 st.caption("Sudah punya akun?")
 if st.button("Masuk Sekarang"):

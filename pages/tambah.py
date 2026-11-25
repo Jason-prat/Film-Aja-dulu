@@ -1,16 +1,20 @@
 import streamlit as st
 from fungsi import *
-
+from readwrite import *
 #belum lengkap, aku cuma nambah UI, belum insert ke json buat hasil inputnya
+sup = ambildb()
+
+
 
 data=detail(st.session_state['id'])
-
+st.header("Tambah Ke Filmku")
+st.caption("Isi catatan untuk film yang kamu ingin tonton")
+if st.button(f'Kembali ke {st.session_state['asal'].split('_')[0].capitalize()}'):
+    st.switch_page(f'pages/{st.session_state['asal'].split('_')[0]}.py')    
 kiri,kanan=st.columns([3,11])
 with kiri:
-        st.header("Tambah Ke Filmku")
-        st.caption("Isi catatan untuk film yang kamu ingin tonton")
-        if st.button(f'Kembali ke {st.session_state['asal'].split('_')[0].capitalize()}'):
-            st.switch_page(f'pages/{st.session_state['asal'].split('_')[0]}.py')    
+
+
         if data['poster']:
             st.image("https://image.tmdb.org/t/p/w500"+data['poster'])
         st.subheader(f'{data['judul']} ({data['tahun']})')
@@ -41,9 +45,9 @@ with kanan:
         if simpan_status == 'Sudah Ditonton':
             ki,t,ka=st.columns(3)
             with ki:
-                sdh_tgl= st.date_input("Tanggal Ditonton")
+                tgl_tonton= st.date_input("Tanggal Ditonton")
             with t:
-                pntn = st.selectbox("Tempat Menonton",['Netflix',"Disney+","Youtube","Lainnya"])
+                pntn = st.selectbox("Tempat Menonton",['Netflix',"Disney+","Youtube","Bioskop","Lainnya"])
             with ka:
                 rate = st.slider('Rating pribadi 1-10' , 0,10,0)
             fav= st.checkbox("Tanda Favorit")
@@ -55,16 +59,18 @@ with kanan:
                             st.switch_page(f'pages/{st.session_state['asal'].split('_')[0]}.py')    
             with simpan:
                 if st.button("Simpan ke Filmku",type='primary'):
+                           
                            st.success("Data Berhasiil Disimpan")
+
         elif simpan_status == 'Sedang Ditonton':
              ki,t,ka=st.columns(3)
              with ki:
-                 sdg_tgl = st.date_input("Tanggal Mulai Menonton")
+                 tgl_tonton = st.date_input("Tanggal Mulai Menonton")
              with t:
                  terakhir = st.text_input("Durasi Nonton Terakhir",placeholder="Contoh : 00.00.00 / 45 menit")
              with ka:
-                 pntn = st.selectbox("Tempat Menonton",['Netflix',"Disney+","Youtube","Lainnya"]) 
-             target = st.date_input("Target Selesai Menonton")
+                 pntn = st.selectbox("Tempat Menonton",['Netflix',"Disney+","Youtube","Bioskop","Lainnya"]) 
+             target = st.date_input("Target Selesai Menonton",value=None)
              komen = st.text_area("Catatan pribadi saat ini",placeholder="Masukkan Komentar Anda Disini, Apakah sejauh ini ada yang menarik?")
              _,batal,simpan=st.columns([4,1,2])
              with batal:
@@ -77,12 +83,11 @@ with kanan:
              st.warning("Rating dan tanggal diisi nanti, setelah filmnya selesai ditonton.")
              ki,t,ka=st.columns(3)
              with ki :
-                  pntn = st.selectbox("Rencana Tempat Menonton",['Netflix',"Disney+","Youtube","Lainnya"]) 
+                  pntn = st.selectbox("Rencana Tempat Menonton",['Netflix',"Disney+","Youtube","Bioskop","Lainnya"]) 
              with t: 
-                  ingin_tgl = st.date_input("Tanggal Rencana Menonton")
+                  tgl_tonton = st.date_input("Tanggal Rencana Menonton")
              with ka:
                   prioritas = st.selectbox("Prioritas Menonton",['Tinggi','Sedang','Rendah'])
-             ingat = st.checkbox("Ingatkan saya saat tanggal target tiba")
              komen= st.text_area("Alasan ingin menonton / note ",placeholder="Direkomendasikan teman, tertarik dengan sutradara/aktornya..")
              _,batal,simpan=st.columns([4,1,2])
              with batal:

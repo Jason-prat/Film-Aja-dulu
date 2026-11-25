@@ -28,8 +28,9 @@ with kanan:
     if batal:
         st.switch_page("pages/beranda.py")
     if tekan:
-        user = baca_usn()
-        if lama != user[username]['password']:
+        sup = ambildb()
+        data = profile(sup,username)
+        if lama != data[0]['password'] :
             st.error("Kata Sandi Lama Salah")
         elif 8 > len(baru):
             st.error("Kata Sandi Minimal Terdiri dari 8 Kata")
@@ -38,7 +39,6 @@ with kanan:
         elif baru == lama:
             st.error("Kata Sandi Baru Harus Berbeda Dengan Sandi Lama")
         else:
-            user[username]['password']= baru
-            tulis_usn(user)
+            sup.table("users").update({"password":baru}).eq("username",username).execute()
             st.success("Password Telah Berhasil Diganti")
 

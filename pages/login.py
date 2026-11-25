@@ -9,16 +9,18 @@ with st.form("form masuk"):
     tekan = st.form_submit_button("Masuk",type="primary")
 
 if tekan:
-    username = username.strip().lower()
-    user = baca_usn()
-    if username not in user:
-        st.error("Username atau Sandi Salah")
-    elif user[username]['password'] != password:
-        st.error("Username atau Sandi Salah")
-    else:
-        st.session_state['user'] = username
-        st.success("Berhasil Masuk")
-        st.rerun()
+    sup = ambildb()
+    if username and password:
+        data = login(sup,username,password)
+        if not data:
+            st.error("Username atau Sandi Salah")
+        else:
+            st.session_state['user'] = username
+            st.success("Berhasil Masuk")
+            st.rerun()
+    elif not username or not password:
+        st.error("Kolom tidak boleh kosong")
+    
 
 if 'sukses' in st.session_state:
     st.success(st.session_state.pop('sukses'))
