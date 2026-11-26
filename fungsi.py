@@ -41,33 +41,48 @@ def kartu(f:dict,asal,offset):
     foto=f.get('poster_path')
     tahun = (f.get("release_date") or f.get("first_air_date") or "")[:4]
     skor=f'·⭐ {f.get('vote_average'):.1f}' if f.get('vote_average') else ""
-    judul=f.get('original_title') or f.get('name')
-    judul_bersih=judul if len(judul)<25 else judul[:23]+'...'
+    judul=f.get('title') or f.get('original_title')
     with st.container(border=True,height='stretch'):
         if foto:
             st.image("https://image.tmdb.org/t/p/w342"+foto)
         st.markdown(f'**{judul}**')
         kunci=f'{asal}_{f.get('id')}_{offset}'
-        st.caption(f'{tahun} {skor} ')
         
         stat= status_tonton(st.session_state['user']).get(f.get('id'))
-        if asal.split('_')[0]=='cari':
+        if asal.split('_')[0] in ['cari','riwayat']:
             if stat == "Sudah Ditonton":
                 st.success(stat)
             elif stat == "Sedang Ditonton":
                 st.warning(stat)
             elif stat == "Ingin Ditonton":
                 st.error(stat)
-
+        if f.get('pribadi'):
+            genre=', '.join(i['name'] for i in f['genres'])
+            kol=st.columns([70,30])
+            with kol[0]:
+                st.caption(f'{tahun} · {genre}')
+            with kol[1]:
+                if f.get('rating_pribadi') != None:
+                    st.caption(f'Rating Pribadi: ⭐{f.get('rating_pribadi')}')
+                else:
+                    st.caption(f'Rating Pribadi: ⭐0')
+                    f['rating_pribadi']=0
+        else:
+            st.caption(f'{tahun} {skor} ')
         col1,col2=st.columns(2)
         with col1:
             if st.button('Detail',key=f'detail{kunci}',type='secondary',use_container_width=True):
                 buka(asal,f['id'])
                 st.switch_page('pages/detail.py')
         with col2:
-            if st.button('Tambah Film',key=f'tambah_{kunci}',type='primary',use_container_width=True):
-                buka(asal,f['id'])
-                st.switch_page('pages/tambah.py')
+            if stat:
+                if st.button('Edit Status Film',key=f'tambah_{kunci}',type='primary',use_container_width=True):
+                    buka(asal,f['id'])
+                    st.switch_page('pages/tambah.py') 
+            else:
+                if st.button('Tambah Film',key=f'tambah_{kunci}',type='primary',use_container_width=True):
+                    buka(asal,f['id'])
+                    st.switch_page('pages/tambah.py')
 
 def grid(film,asal,n=4,offset=0): #buat jumlah kolom
     for i,item in enumerate(film):
@@ -101,7 +116,7 @@ def halaman(film,asal,hal=4):
 @st.cache_data(ttl=3600,show_spinner='Memuat data film...')
 def detail(id):
     api=st.secrets['TMDB_API_KEY']
-    r=requests.get(f'https://api.themoviedb.org/3/movie/{st.session_state['id']}',params={'api_key':api,"append_to_response": "credits,videos"})
+    r=requests.get(f'https://api.themoviedb.org/3/movie/{id}',params={'api_key':api,"append_to_response": "credits,videos"})
     data_film=r.json()
     poster=data_film.get('poster_path')
     cast=[]
@@ -122,19 +137,20 @@ def detail(id):
     trailer=[i['key'] for i in videos if i.get('type')=='Trailer' and i.get('site')=='YouTube' and 'fan' not in i.get('name','').lower()]
     tanggal=datetime.strptime(data_film['release_date'], "%Y-%m-%d").date()
     rilis=tanggal.strftime("%d %B %Y") if tanggal else 'Belum Tersedia Tanggal Rilis'
-    return {'poster':poster,'direktor':direktor,'durasi':data_film.get('runtime'),'genre':genres,'rilis':rilis+skor,'pemeran':cast,'sinopsis':data_film.get('overview'),'trailer':trailer,'judul':data_film.get('original_title'),'tahun':data_film.get('release_date')[:4]}
+    return {'poster':poster,'direktor':direktor,'durasi':data_film.get('runtime'),'genre':genres,'rilis':rilis+skor,'pemeran':cast,'sinopsis':data_film.get('overview'),'trailer':trailer,'judul':data_film.get('title'),'tahun':data_film.get('release_date')[:4]}
 
 def simpan_query():
     st.session_state['query']=st.session_state['input']
 
-@st.cache_data(ttl=3600)
+@st.cache_data(ttl=3600,show_spinner='Memuat Riwayat...')
 def ambil_data_film(film):
     url='https://api.themoviedb.org/3'
     api=st.secrets['TMDB_API_KEY']
     data=[]
     for i in film:
         r=requests.get(f'{url}/movie/{str(i['tmdb_id'])}',params={'api_key':api})
-        data.append({**r.json(),'pribadi':i})
+        data.append({**r.json(),'pribadi':i,'rating_pribadi':i['rating_pribadi']})
+
     return data
 
 def sorting(film,key,asc=True):
@@ -154,10 +170,32 @@ def sorting(film,key,asc=True):
     return hasil
 
 def key_rating(film):
-    return film['pribadi'].get('rating_pribadi') or 0
+    rating = film.get('rating_pribadi') or 0 
+    return rating
 
 def key_judul(film):
     return film.get('original_title').lower()
 
 def key_tahun(film):
     return (film.get('release_date') or '')[:4]
+
+def key_favorit(film):
+    return [i for i in film if i.get('pribadi').get('favorit')]
+
+def status(film,status):
+    return [i for i in film if i.get('pribadi').get('status')==status]
+
+def cari(film,query):
+    judul=(film.get('title') or '').lower()
+    genre = ' '.join(i['name'] for i in film.get('genres',[])).lower()
+    tahun = (film.get('release_date') or '')[:4]
+    rating = film.get('rating_pribadi')
+    rating = str(rating) if rating is not None else ''
+    teks = judul + ' ' + genre
+    for i in query.split():
+        if i in teks:
+            continue
+        if i == tahun or i == rating:
+            continue
+        return False
+    return True

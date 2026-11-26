@@ -10,8 +10,14 @@ a,b=st.columns([3,11])
 with a:
     if data['poster']:
         st.image("https://image.tmdb.org/t/p/w500"+data['poster'])
-    if st.button('Tambah Film',use_container_width=True,type='primary'):
-        st.switch_page('pages/tambah.py')
+    stat=status_tonton(st.session_state['user']).get(st.session_state['id'])
+    if stat:
+        st.caption(f'Status di Filmku: **{stat}**')
+        if st.button('Edit Status Film',use_container_width=True,type='primary'):
+            st.switch_page('pages/tambah.py')
+    else:
+        if st.button('Tambah Film',use_container_width=True,type='primary'):
+            st.switch_page('pages/tambah.py')
 with b:
     st.header(f'{data['judul']} ({data['tahun']})')
     st.write(f'Sutradara: {data['direktor']} | Durasi: {data['durasi']} Menit | Genre: {data['genre']}')
