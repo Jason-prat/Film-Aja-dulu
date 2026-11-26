@@ -71,7 +71,7 @@ with kanan:
             if simpan_status == 'Sudah Ditonton':
                 ki,t,ka=st.columns(3)
                 with ki:
-                    tgl_tonton= st.date_input("Tanggal Ditonton",value=film['tgl_tonton'] if film else None )#
+                    tgl_tonton= st.date_input("Tanggal Ditonton",value=film['tgl_tonton'] if film else 'today' )#
                 with t:
                     pntn = st.selectbox("Tempat Menonton",options=TEMPAT_NONTON)#
                 with ka:
@@ -109,7 +109,7 @@ with kanan:
             elif simpan_status == 'Sedang Ditonton':
                 ki,t,ka=st.columns(3)
                 with ki:
-                    tgl_tonton = st.date_input("Tanggal Mulai Menonton",value=film['tgl_tonton'] if film else None)#
+                    tgl_tonton = st.date_input("Tanggal Mulai Menonton",value=film['tgl_tonton'] if film else 'today')#
                 with t:
                     terakhir = st.text_input("Durasi Nonton Terakhir",placeholder="Contoh : 00.00.00 / 45 menit",value=film['durasi_terakhir'] if film else None)#
                 with ka:
@@ -147,7 +147,7 @@ with kanan:
                 with ki :
                     pntn = st.selectbox("Rencana Tempat Menonton",options=TEMPAT_NONTON) #
                 with t: 
-                    tgl_tonton = st.date_input("Tanggal Rencana Menonton",value=film['tgl_tonton'] if film else None)#
+                    tgl_tonton = st.date_input("Tanggal Rencana Menonton",value=film['tgl_tonton'] if film else 'today')#
                 with ka:
                     prioritas = st.selectbox("Prioritas Menonton",PRIORITAS)#
                 komen= st.text_area("Alasan ingin menonton / note ",placeholder="Direkomendasikan teman, tertarik dengan sutradara/aktornya..",value=film['catatan'] if film else None)#
