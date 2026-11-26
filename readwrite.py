@@ -46,6 +46,7 @@ def tambah(db,username,tmdb_id,status,tempat,tgl_tonton,catatan=None,rating_prib
             db.table('film').update(data).eq('username',username).eq('tmdb_id',tmdb_id).execute()
             return True, "Data Berhasil Diperbarui"
         db.table('film').insert(data).execute()
+        ambil_riwayat.clear()
         return True, "Data Berhasil Disimpan"
     except Exception as kecuali:
         if '23505' in str(kecuali) or "duplicate" in str(kecuali).lower():
@@ -67,3 +68,7 @@ def ambildb():
 def ambil_riwayat(_db, username):
     return _db.table('film').select('*').eq('username', username).execute().data
 
+def hapus_film(film):
+    db=ambildb()
+    db.table('film').delete().eq('username',st.session_state['user']).eq('tmdb_id',st.session_state['id']).execute()
+    ambil_riwayat.clear()

@@ -200,3 +200,13 @@ def cari(film,query):
             continue
         return False
     return True
+
+@st.dialog('Hapus film?')
+def hapus(film):
+    st.write(f'**Hapus {film['judul']}** dari riwayat?')
+    kol=st.columns(2)
+    if kol[0].button('Batal',use_container_width=True):
+        st.rerun()
+    if kol[1].button('Hapus',use_container_width=True):
+        hapus_film(film)
+        st.switch_page(f'pages/{st.session_state['asal'].split('_')[0]}.py')
