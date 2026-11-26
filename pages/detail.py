@@ -14,6 +14,7 @@ with a:
     if stat:
         st.caption(f'Status di Filmku: **{stat}**')
         if st.button('Edit Status Film',use_container_width=True,type='primary'):
+            st.session_state['status']=stat
             st.switch_page('pages/tambah.py')
     else:
         if st.button('Tambah Film',use_container_width=True,type='primary'):

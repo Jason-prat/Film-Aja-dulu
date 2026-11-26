@@ -77,6 +77,7 @@ def kartu(f:dict,asal,offset):
         with col2:
             if stat:
                 if st.button('Edit Status Film',key=f'tambah_{kunci}',type='primary',use_container_width=True):
+                    st.session_state['status']=stat
                     buka(asal,f['id'])
                     st.switch_page('pages/tambah.py') 
             else:
