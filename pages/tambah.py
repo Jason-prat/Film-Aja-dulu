@@ -25,7 +25,7 @@ data=detail(st.session_state['id'])
 if 'status' not in st.session_state:
      st.session_state['status']= film['status'] if film else 'Sudah Ditonton'
 
-
+# st.write(data)
 simpan_status=st.session_state['status']
 # st.write(simpan_status)
 st.header("Tambah Ke Filmku")
@@ -83,7 +83,7 @@ with kanan:
                 with _:
                      if film:
                         if st.button('Hapus dari Filmku'):
-                            hapus(data)
+                            popup_hapus(data)
                               
                 with simpan:
                     with st.container(horizontal=True,horizontal_alignment='right'):
@@ -120,7 +120,7 @@ with kanan:
                 with _:
                      if film:
                         if st.button('Hapus dari Filmku'):
-                            hapus(data)
+                            popup_hapus(data)
                 with simpan:
                     with st.container(horizontal=True,horizontal_alignment='right'):
                         if st.button("Batal"):
@@ -155,7 +155,7 @@ with kanan:
                 with _:
                      if film:
                         if st.button('Hapus dari Filmku'):
-                            hapus(data)
+                            popup_hapus(data)
                 with simpan:
                     with st.container(horizontal=True,horizontal_alignment='right'):
                         if st.button("Batal"):

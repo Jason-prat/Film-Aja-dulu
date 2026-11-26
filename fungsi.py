@@ -138,7 +138,7 @@ def detail(id):
     trailer=[i['key'] for i in videos if i.get('type')=='Trailer' and i.get('site')=='YouTube' and 'fan' not in i.get('name','').lower()]
     tanggal=datetime.strptime(data_film['release_date'], "%Y-%m-%d").date()
     rilis=tanggal.strftime("%d %B %Y") if tanggal else 'Belum Tersedia Tanggal Rilis'
-    return {'poster':poster,'direktor':direktor,'durasi':data_film.get('runtime'),'genre':genres,'rilis':rilis+skor,'pemeran':cast,'sinopsis':data_film.get('overview'),'trailer':trailer,'judul':data_film.get('title'),'tahun':data_film.get('release_date')[:4]}
+    return {'poster':poster,'direktor':direktor,'durasi':data_film.get('runtime'),'genre':genres,'rilis':rilis+skor,'pemeran':cast,'sinopsis':data_film.get('overview'),'trailer':trailer,'judul':data_film.get('title'),'tahun':data_film.get('release_date')[:4],'tmdb_id':id}
 
 def simpan_query():
     st.session_state['query']=st.session_state['input']
@@ -202,7 +202,7 @@ def cari(film,query):
     return True
 
 @st.dialog('Hapus film?')
-def hapus(film):
+def popup_hapus(film):
     st.write(f'**Hapus {film['judul']}** dari riwayat?')
     kol=st.columns(2)
     if kol[0].button('Batal',use_container_width=True):

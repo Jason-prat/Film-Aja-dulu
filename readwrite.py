@@ -70,5 +70,5 @@ def ambil_riwayat(_db, username):
 
 def hapus_film(film):
     db=ambildb()
-    db.table('film').delete().eq('username',st.session_state['user']).eq('tmdb_id',st.session_state['id']).execute()
+    db.table('film').delete().eq('username',st.session_state['user']).eq('tmdb_id',film.get('tmdb_id')).execute()
     ambil_riwayat.clear()
