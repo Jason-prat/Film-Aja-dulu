@@ -42,7 +42,8 @@ def kartu(f:dict,asal,offset):
     tahun = (f.get("release_date") or f.get("first_air_date") or "")[:4]
     skor=f'·⭐ {f.get('vote_average'):.1f}' if f.get('vote_average') else ""
     judul=f.get('title') or f.get('original_title')
-    data=ambil_satu_film(st.session_state['user'],f.get('id'))
+    id=f.get('id')
+    data=ambil_satu_film(st.session_state['user'],id)
     # st.write(data)
     with st.container(border=True,height='stretch',width='stretch'):
         if foto:
