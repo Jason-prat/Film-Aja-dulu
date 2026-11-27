@@ -42,7 +42,7 @@ def tambah(db,username,tmdb_id,status,tempat,tgl_tonton,catatan=None,rating_prib
         'prioritas':prioritas
     }
     try:
-        if ambil_satu_film(db,username,tmdb_id):
+        if ambil_satu_film(username,tmdb_id):
             db.table('film').update(data).eq('username',username).eq('tmdb_id',tmdb_id).execute()
             return True, "Data Berhasil Diperbarui"
         db.table('film').insert(data).execute()

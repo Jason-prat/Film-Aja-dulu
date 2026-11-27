@@ -3,3 +3,5 @@ requests
 pandas
 supabase
 openpyxl
+matplotlib
+google-genai
