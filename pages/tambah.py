@@ -4,7 +4,7 @@ from readwrite import *
 #belum lengkap, aku cuma nambah UI, belum insert ke json buat hasil inputnya
 
 sup = ambildb()
-film=ambil_satu_film(sup,st.session_state['user'],st.session_state['id'])
+film=ambil_satu_film(st.session_state['user'],st.session_state['id'])
 LIST_TEMPAT=['Netflix',"Disney+","Youtube","Bioskop","Lainnya"]
 LIST_PRIO=['Tinggi','Sedang','Rendah']
 if film:
@@ -38,9 +38,16 @@ with kiri:
 
         if data['poster']:
             st.image("https://image.tmdb.org/t/p/w500"+data['poster'])
-        st.subheader(f'{data['judul']} ({data['tahun']})')
+        if not data['tahun'] == '':
+            st.header(f'{data['judul']} ({data['tahun']})')
+        else:
+            st.header(f'{data['judul']}')
         st.write(f'Sutradara: {data['direktor']} | Durasi: {data['durasi']} Menit | Genre: {data['genre']}')
-        st.write(f'Rilis: {data['rilis']}')
+        
+        if not data['rilis'] == '':
+            st.write(f'Rilis: {data['rilis']}')
+        else:
+            st.caption('Tidak ada tanggal rilis')
 with kanan:
      with st.container(border=True):
         st.write("Status Tontonan")

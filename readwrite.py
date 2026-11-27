@@ -58,7 +58,8 @@ def status_tonton(username):
     dats = db.table("film").select("tmdb_id,status").eq("username",username).execute()
     return {datas["tmdb_id"]:datas['status'] for datas in dats.data}
 
-def ambil_satu_film(db,username,tmdb_id):
+def ambil_satu_film(username,tmdb_id):
+    db=ambildb()
     data = db.table('film').select('*').eq('username',username).eq('tmdb_id',tmdb_id).execute()
     return data.data[0] if data.data else None
 @st.cache_resource
@@ -66,6 +67,7 @@ def ambildb():
     return create_client(st.secrets["SUPABASE_URL"], st.secrets["SUPABASE_KEY"])
 @st.cache_data(ttl=600)
 def ambil_riwayat(_db, username):
+    _db=ambildb()
     return _db.table('film').select('*').eq('username', username).execute().data
 
 def hapus_film(film):

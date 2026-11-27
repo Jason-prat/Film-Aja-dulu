@@ -20,21 +20,30 @@ with a:
         if st.button('Tambah Film',use_container_width=True,type='primary'):
             st.switch_page('pages/tambah.py')
 with b:
-    st.header(f'{data['judul']} ({data['tahun']})')
+    if not data['tahun'] == '':
+        st.header(f'{data['judul']} ({data['tahun']})')
+    else:
+        st.header(f'{data['judul']}')
     st.write(f'Sutradara: {data['direktor']} | Durasi: {data['durasi']} Menit | Genre: {data['genre']}')
-    st.write(f'Rilis: {data['rilis']}')
-    kol=st.columns(len(data['pemeran']),gap='small',border=True,width=768)
-    for i in range(len(data['pemeran'])):
-        with kol[i]:
-            pass
-            if data['pemeran']:
-                try:
-                    st.image("https://image.tmdb.org/t/p/w185"+data['pemeran'][i][1])
+    if not data['rilis'] == '':
+        st.write(f'Rilis: {data['rilis']}')
+    else:
+        st.caption('Tidak ada tanggal rilis')
+    try:
+        kol=st.columns(len(data['pemeran']),gap='small',border=True,width=768)
+        for i in range(len(data['pemeran'])):
+            with kol[i]:
+                pass
+                if data['pemeran']:
+                    try:
+                        st.image("https://image.tmdb.org/t/p/w185"+data['pemeran'][i][1])
 
-                except:
-                    st.image('https://www.google.com/imgres?q=foto%20profile%20kosong&imgurl=https%3A%2F%2Fi.pinimg.com%2Foriginals%2F8a%2Fe9%2Fe9%2F8ae9e92fa4e69967aa61bf2bda967b7b.jpg&imgrefurl=https%3A%2F%2Fwww.pinterest.com%2Fpin%2F1050746156848281266%2F&docid=cG3u9g48aBv5vM&tbnid=L0oFsHYt8bCsZM&vet=12ahUKEwjU0uawjaCYAxUCzDgGHTdHFScQnPAOegQIQBAA..i&w=736&h=736&hcb=2&ved=2ahUKEwjU0uawjaCYAxUCzDgGHTdHFScQnPAOegQIQBAA')
-                st.write(f'**{data['pemeran'][i][0]}**')
-                st.write(data['pemeran'][i][2])
+                    except:
+                        st.image('https://www.google.com/imgres?q=foto%20profile%20kosong&imgurl=https%3A%2F%2Fi.pinimg.com%2Foriginals%2F8a%2Fe9%2Fe9%2F8ae9e92fa4e69967aa61bf2bda967b7b.jpg&imgrefurl=https%3A%2F%2Fwww.pinterest.com%2Fpin%2F1050746156848281266%2F&docid=cG3u9g48aBv5vM&tbnid=L0oFsHYt8bCsZM&vet=12ahUKEwjU0uawjaCYAxUCzDgGHTdHFScQnPAOegQIQBAA..i&w=736&h=736&hcb=2&ved=2ahUKEwjU0uawjaCYAxUCzDgGHTdHFScQnPAOegQIQBAA')
+                    st.write(f'**{data['pemeran'][i][0]}**')
+                    st.write(data['pemeran'][i][2])
+    except:
+        st.write('Tidak ada pemeran ditemukan')
 
             
     st.subheader('Sinopsis')

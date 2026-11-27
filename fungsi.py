@@ -38,14 +38,26 @@ def cari_film(url,api,query,hal=4):
     return film
 
 def kartu(f:dict,asal,offset):
-    foto=f.get('poster_path')
+    foto=f"https://image.tmdb.org/t/p/w342{f.get('poster_path')}" if f.get('poster_path') else 'assets/no_poster.png'
     tahun = (f.get("release_date") or f.get("first_air_date") or "")[:4]
     skor=f'·⭐ {f.get('vote_average'):.1f}' if f.get('vote_average') else ""
     judul=f.get('title') or f.get('original_title')
-    with st.container(border=True,height='stretch'):
+    data=ambil_satu_film(st.session_state['user'],f.get('id'))
+    # st.write(data)
+    with st.container(border=True,height='stretch',width='stretch'):
         if foto:
-            st.image("https://image.tmdb.org/t/p/w342"+foto)
-        st.markdown(f'**{judul}**')
+            with st.container(horizontal_alignment='center',vertical_alignment='top'):
+                st.image("https://image.tmdb.org/t/p/w342"+foto)
+        if data and asal.split('_')[0] == 'riwayat':
+            kol=st.columns(2)
+            with kol[0]:
+                st.markdown(f'**{judul}**')
+            with kol[1]:
+                with st.container(horizontal_alignment='right',width='stretch'):
+                    st.markdown(f'Tanggal ditonton:')
+                    st.markdown(f'{datetime.strptime(data['tgl_tonton'], "%Y-%m-%d").date().strftime("%d %B %Y")}')
+        else:
+            st.markdown(f'**{judul}**')
         kunci=f'{asal}_{f.get('id')}_{offset}'
         
         stat= status_tonton(st.session_state['user']).get(f.get('id'))
@@ -58,15 +70,16 @@ def kartu(f:dict,asal,offset):
                 st.error(stat)
         if f.get('pribadi'):
             genre=', '.join(i['name'] for i in f['genres'])
-            kol=st.columns([70,30])
+            kol=st.columns([50,50])
             with kol[0]:
                 st.caption(f'{tahun} · {genre}')
             with kol[1]:
                 if f.get('rating_pribadi') != None:
                     st.caption(f'Rating Pribadi: ⭐{f.get('rating_pribadi')}')
                 else:
-                    st.caption(f'Rating Pribadi: ⭐0')
-                    f['rating_pribadi']=0
+                    with st.container(horizontal_alignment='right'):
+                        st.caption(f'Rating Pribadi: ⭐0')
+                        f['rating_pribadi']=0
         else:
             st.caption(f'{tahun} {skor} ')
         col1,col2=st.columns(2)
@@ -85,17 +98,17 @@ def kartu(f:dict,asal,offset):
                     buka(asal,f['id'])
                     st.switch_page('pages/tambah.py')
 
-def grid(film,asal,n=4,offset=0): #buat jumlah kolom
+def grid(film,asal,n=5,offset=0): #buat jumlah kolom
     for i,item in enumerate(film):
         if i%n==0:
-            kolom=st.columns(n,gap='medium')
+            kolom=st.columns(n)
         with kolom[i%n]:
             kartu(item,asal,offset+i)
 
 def ganti_hal(kunci,ganti): #buat menambah kunci halaman
     st.session_state[kunci]+=ganti
 
-def halaman(film,asal,hal=4):
+def halaman(film,asal,hal=5):
     kunci=f'hal_{asal}'
     total=max(1, math.ceil(len(film)/hal))
     st.session_state.setdefault(kunci,1)
@@ -104,7 +117,7 @@ def halaman(film,asal,hal=4):
     
     halaman=st.session_state[kunci]
     mulai = (halaman-1)*hal
-    grid(film[mulai:mulai + hal],asal,4,mulai)
+    grid(film[mulai:mulai + hal],asal,hal,mulai)
 
     kiri,tengah,kanan=st.columns(3)
     with kiri:
@@ -136,8 +149,11 @@ def detail(id):
     videos=data_film.get('videos').get('results')
     skor=f' ·⭐ {data_film.get('vote_average'):.1f}' if data_film.get('vote_average') else ""
     trailer=[i['key'] for i in videos if i.get('type')=='Trailer' and i.get('site')=='YouTube' and 'fan' not in i.get('name','').lower()]
-    tanggal=datetime.strptime(data_film['release_date'], "%Y-%m-%d").date()
-    rilis=tanggal.strftime("%d %B %Y") if tanggal else 'Belum Tersedia Tanggal Rilis'
+    try:
+        tanggal=datetime.strptime(data_film['release_date'], "%Y-%m-%d").date()
+        rilis=tanggal.strftime("%d %B %Y") if tanggal else 'Belum Tersedia Tanggal Rilis'
+    except:
+        rilis=""
     return {'poster':poster,'direktor':direktor,'durasi':data_film.get('runtime'),'genre':genres,'rilis':rilis+skor,'pemeran':cast,'sinopsis':data_film.get('overview'),'trailer':trailer,'judul':data_film.get('title'),'tahun':data_film.get('release_date')[:4],'tmdb_id':id}
 
 def simpan_query():
@@ -185,6 +201,9 @@ def key_favorit(film):
 
 def status(film,status):
     return [i for i in film if i.get('pribadi').get('status')==status]
+
+def key_tanggal(film):
+    return film.get('pribadi').get('tgl_tonton')
 
 def cari(film,query):
     judul=(film.get('title') or '').lower()
